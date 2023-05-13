@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{url_for('static',filename='directory_view.css')}}">
+    <title>{{ heading }}</title>
+
+</head>
+<body>
+    <button id="logout">Logout</button>
+    <h1>{{ heading }}</h1>
+    <form action= {{link}}  method="post" enctype="multipart/form-data">
+        <input type="hidden" name="form_id" value="submit_file">
+        <input type="file" name="file" accept=".docx, .odt, .xslx, .ods">
+        <button type="submit">Submit</button>
+    </form>
+    <h2>Files</h2>
+    <ul>
+    {% for file in files %}
+        <li>
+            <a href="/versions?name={{ file[0] }}">{{ file[0] }} - Uploaded on {{ file[1] }}</a>
+            <form action={{link}} method="post"  style="display: inline-block;">
+                <input type="hidden" name="form_id" value="delete_file">
+                <input type="hidden" name="file_name" value="{{ file[0] }}">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
+
+<script>
+    const logoutBtn = document.getElementById("logout");
+    logoutBtn.addEventListener('click',()=>{
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            // Handle the response from the server
+            console.log(response);
+        }).catch(error => {
+            // Handle any errors that occur during the request
+            console.error(error);
+        });
+    });
+</script>

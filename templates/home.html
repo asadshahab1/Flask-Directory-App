@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <link rel="stylesheet" href="{{url_for('static',filename='home.css')}}">
+    <meta charset="UTF-8">
+    <title>Document Management System</title>
+</head>
+<body>
+<button id = "logout">Logout</button>
+<button id = "sharebtn">Share Document</button>
+<div class="root-view">
+  <h1>Root View</h1>
+  <button class="add-directory-btn">Add Directory</button>
+    <button class="add-directory-btn" style="margin-top:20px" id = "delbtn">Delete Directory</button>
+</div>
+<form action="/shared" method="post">
+    <label for = "share">Documents Received</label>
+    <input id="share" type="submit">
+</form>
+<script>
+const share_btn = document.getElementById("sharebtn")
+share_btn.addEventListener('click',()=>{
+const sender_name = prompt("With whom do you want to share? (Username)")
+const document_name = prompt("Which document do you want to share? (Write name)")
+fetch('/share_doc',{
+method:'POST',
+body: JSON.stringify({receiver_name: sender_name, document_name: document_name}),
+headers: {
+      'Content-Type': 'application/json'
+    }
+});
+});
+const logout_btn = document.getElementById("logout")
+logout_btn.addEventListener('click',()=>{
+fetch('/logout', {
+
+  }).then(response => {
+    // Handle the response from the server
+    window.location.replace("/");
+  }).catch(error => {
+    // Handle any errors that occur during the request
+    console.error(error);
+  });
+});
+// Get the root view element and create a container for the directories
+const rootView = document.querySelector('.root-view');
+const directoryContainer = document.createElement('div');
+directoryContainer.classList.add('directory-container');
+rootView.appendChild(directoryContainer);
+const directoryView = document.createElement('div');
+document.body.appendChild(directoryView)
+directoryContainer.innerHTML = ` {% for item in directories %}
+<div class="directory" onclick="divClick('{{item}}')">{{item}}</div>
+{% endfor %}`
+
+function divClick(item){
+window.location.href="/directory_view/"+item;}
+// Add an event listener to the "Add Directory" button
+const addDirBtn = document.querySelector('.add-directory-btn');
+addDirBtn.addEventListener('click', () => {
+  console.log("Direct");
+  // Prompt the user for a directory name
+  const dirName = prompt('Enter the name of the new directory:');
+
+  // Check if the user entered a name
+  if (dirName) {
+    // Create a new directory element
+    const newDir = document.createElement('div');
+    newDir.classList.add('directory');
+    newDir.textContent = dirName;
+fetch('/create_directory', {
+    method: 'POST',
+    body: JSON.stringify({ dirName }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(response => {
+    // Handle the response from the server
+    console.log(response);
+  }).catch(error => {
+    // Handle any errors that occur during the request
+    console.error(error);
+  });
+    // Add a click event listener to the new directory element
+    newDir.addEventListener('click', () => {
+    window.location.href='/directory_view/'+dirName
+});
+    directoryContainer.appendChild(newDir);}
+  });
+const delDirBtn = document.getElementById("delbtn");
+delDirBtn.addEventListener('click',()=>{
+const delName = prompt("Which directory do you want to delete?");
+if (delName)
+{
+fetch('/delete_directory', {
+    method: 'POST',
+    body: JSON.stringify({ delName }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(response => response.json()).then(data=>{
+    if (data){
+const divs = document.querySelectorAll(`div:is(:contains("${delName}")):not(:has(:contains("${delName}")))`);
+    }
+  }).catch(error => {
+    // Handle any errors that occur during the request
+    console.error(error);
+  });
+
+}});
+
+
+
+
+</script>
+</body>
+</html>

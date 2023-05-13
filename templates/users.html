@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>User Data</title>
+	<style>
+		table, th, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+			padding: 5px;
+		}
+	</style>
+</head>
+<body>
+	<h1>User Data</h1>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Email</th>
+				<th>Directories</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for user in users %}
+			<tr>
+				<td>{{ user['name'] }}</td>
+				<td>{{ user['email'] }}</td>
+				<td>
+					{% for directory in user['directories'] %}
+					<h3>{{ directory['dir_name'] }}</h3>
+<!--					{% for document in directory['documents'] %}-->
+<!--					<p>{{ document['file_name'] }} - {{ document['upload_date'] }}</p>-->
+<!--					{% endfor %}-->
+					{% endfor %}
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</body>
+</html>
